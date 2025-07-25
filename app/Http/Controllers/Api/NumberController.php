@@ -4,8 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Interfaces\NumberInterface;
-use App\Http\Requests\NumberRequest;
-
+use Exception;
 
 class NumberController extends Controller
 {
@@ -18,14 +17,21 @@ class NumberController extends Controller
 
     public function generate()  
     {
-        $number = $this->repository->generate();
-        return response()->json($number,201);
+        try {
+            $number = $this->repository->generate();
+            return response()->json($number,201);
+        } catch(Exception $e) {
+            return response()->json(['error' => 'Failedgenerate number'], 500);
+        }
     }
 
-    public function retrieve(NumberRequest $request,int $id)
+    public function retrieve(int $id)
     {
-        $number = $this->repository->retrieve($id);
-        
-        return $number ? response()->json($number) : response()->json(['error' => 'not found'],404);
+        try {
+            $number = $this->repository->retrieve($id);
+            return $number ? response()->json($number) : response()->json(['error' => 'Number not found'], 404);
+        } catch(Exception $e) {
+            return response()->json(['error' => 'Failed founded number'], 500);
+        }
     }
 }
