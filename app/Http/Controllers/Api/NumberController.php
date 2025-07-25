@@ -4,28 +4,29 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Interfaces\NumberInterface;
+use App\Services\NumberGenerationService;
 use Exception;
 
 class NumberController extends Controller
 {
-    protected NumberInterface $repository;
+    public function __construct(
+        protected NumberInterface $repository,
+        protected NumberGenerationService $service
+    ) {}
+    
 
-    public function __construct(NumberInterface $repository)
-    {
-        $this->repository = $repository;
-    }
-
-    public function generate()  
+    public function generate()
     {
         try {
-            $number = $this->repository->generate();
-            return response()->json($number,201);
+            $value = $this->service->generateNumber();
+            $number = $this->repository->generate($value);
+            return response()->json(['id' => $number->id],201);
         } catch(Exception $e) {
-            return response()->json(['error' => 'Failedgenerate number'], 500);
+            return response()->json(['error' => 'Faile dgenerate number'], 500);
         }
     }
 
-    public function retrieve(int $id)
+    public function retrieve($id) 
     {
         try {
             $number = $this->repository->retrieve($id);

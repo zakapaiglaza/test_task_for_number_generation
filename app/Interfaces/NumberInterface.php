@@ -6,6 +6,6 @@ use App\Models\Number;
 
 interface NumberInterface
 {
-    public function generate(): array;
+    public function generate(int $value): Number;
     public function retrieve(int $id): ?Number;
 }
